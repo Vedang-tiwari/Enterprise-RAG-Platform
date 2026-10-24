@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise RAG Platform | AI Knowledge Cloud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-base: #090d16;
+      --bg-surface: #101626;
+      --bg-card: rgba(22, 30, 49, 0.75);
+      --bg-glass: rgba(16, 22, 38, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --primary-hover: #4f46e5;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.45);
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 45%);
+    }
+
+    /* App Header */
+    header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .badge-live {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .badge-live::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .selector-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+    .selector-box select {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: var(--font-main);
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+    .selector-box select option {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid var(--border-focus);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .user-chip:hover {
+      background: rgba(99, 102, 241, 0.2);
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 64px);
+    }
+
+    /* Sidebar Navigation */
+    aside {
+      width: 250px;
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-item:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .nav-item.active {
+      color: #fff;
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(99, 102, 241, 0.05));
+      border-left: 3px solid var(--primary);
+    }
+    .nav-item i {
+      font-size: 1.05rem;
+      width: 20px;
+      text-align: center;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Main Viewport */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .view-panel {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .view-panel.active {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Chat View */
+    .chat-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      gap: 16px;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-right: 8px;
+    }
+    .message-row {
+      display: flex;
+      gap: 14px;
+      max-width: 85%;
+    }
+    .message-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .message-row.assistant {
+      align-self: flex-start;
+    }
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .avatar.user-av {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #fff;
+    }
+    .avatar.bot-av {
+      background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+      color: #fff;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+    .bubble {
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .message-row.user .bubble {
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .message-row.assistant .bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: #e2e8f0;
+      border-bottom-left-radius: 4px;
+      backdrop-filter: blur(12px);
+    }
+
+    /* Citations in chat */
+    .citation-tray {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .citation-pill {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid var(--border-focus);
+      color: #a5b4fc;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .citation-pill:hover {
+      background: rgba(99, 102, 241, 0.25);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Chat Input Area */
+    .chat-input-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
+    }
+    .chat-input-bar textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: var(--font-main);
+      font-size: 0.92rem;
+      resize: none;
+      outline: none;
+      min-height: 48px;
+      max-height: 140px;
+    }
+    .chat-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .options-group {
+      display: flex;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+    .btn-send {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      border: none;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px var(--primary-glow);
+      transition: all 0.2s;
+    }
+    .btn-send:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .btn-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Documents View */
+    .docs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .dropzone-box {
+      border: 2px dashed rgba(99, 102, 241, 0.4);
+      background: rgba(99, 102, 241, 0.04);
+      border-radius: var(--radius-lg);
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 28px;
+    }
+    .dropzone-box:hover, .dropzone-box.dragover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+    .dropzone-box i {
+      font-size: 2.4rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    /* Table Styles */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    th {
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-dim);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-subtle);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-READY {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-PROCESSING {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .status-FAILED {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    /* Cards Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .metric-card .title {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .metric-card .value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .metric-card .sub {
+      font-size: 0.78rem;
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Modal / Drawer */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 550px;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .close-btn:hover { color: #fff; }
+
+    /* Citation Preview */
+    .citation-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--primary);
+      padding: 14px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-top: 12px;
+      font-family: var(--font-code);
+      max-height: 250px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand-wrap">
+      <div class="brand-logo"><i class="fa-solid fa-brain"></i></div>
+      <div>
+        <div class="brand-title">Enterprise-RAG-Platform</div>
+      </div>
+      <span class="badge-live">Hybrid RAG Engine Online</span>
+    </div>
+
+    <div class="header-controls">
+      <div class="selector-box">
+        <i class="fa-solid fa-building text-dim"></i>
+        <select id="orgSelector" onchange="switchOrganization(this.value)">
+          <option value="">Loading Organizations...</option>
+        </select>
+      </div>
+
+      <div class="selector-box">
+        <i class="fa-solid fa-folder-tree text-dim"></i>
+        <select id="workspaceSelector" onchange="switchWorkspace(this.value)">
+          <option value="">Loading Workspaces...</option>
+        </select>
+      </div>
+
+      <div class="user-chip" onclick="openAuthModal()">
+        <i class="fa-solid fa-user-shield text-primary"></i>
+        <span id="userNameDisplay">Admin User</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside>
+      <div class="nav-item active" onclick="switchTab('chat')">
+        <i class="fa-solid fa-comments"></i> Knowledge Chat
+      </div>
+      <div class="nav-item" onclick="switchTab('documents')">
+        <i class="fa-solid fa-file-shield"></i> Documents Hub
+      </div>
+      <div class="nav-item" onclick="switchTab('usage')">
+        <i class="fa-solid fa-chart-line"></i> Usage & Cost
+      </div>
+      <div class="nav-item" onclick="switchTab('admin')">
+        <i class="fa-solid fa-server"></i> System Telemetry
+      </div>
+
+      <div class="sidebar-footer">
+        <div>Architecture: Multi-Tenant RAG</div>
+        <div>Vector DB: Qdrant + BM25 RRF</div>
+        <div>Security: Strict Workspace Isolation</div>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main>
+      <!-- 1. CHAT VIEW -->
+      <div id="view-chat" class="view-panel active">
+        <div class="chat-layout">
+          <div class="chat-messages" id="chatMessageList">
+            <!-- Initial Welcome Message -->
+            <div class="message-row assistant">
+              <div class="avatar bot-av"><i class="fa-solid fa-robot"></i></div>
+              <div class="bubble">
+                <strong>Welcome to Enterprise Knowledge Platform!</strong><br><br>
+                Ask questions regarding your organization's private documents (PDFs, DOCX, policies, manuals). Every answer is grounded via hybrid retrieval (Vector + BM25) and cross-encoder reranked with exact source citations.
+                <div class="citation-tray">
+                  <span class="citation-pill"><i class="fa-solid fa-shield"></i> Anti-Injection Active</span>
+                  <span class="citation-pill"><i class="fa-solid fa-bolt"></i> SSE Streaming Enabled</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="chat-input-bar">
+            <textarea id="chatInput" placeholder="Ask anything about your workspace documents (e.g. 'What is the remote work policy?')..." onkeydown="handleChatKey(event)"></textarea>
+            <div class="chat-actions">
+              <div class="options-group">
+                <span><i class="fa-solid fa-check text-emerald"></i> Hybrid RRF</span>
+                <span><i class="fa-solid fa-filter text-cyan"></i> Rerank Top-5</span>
+                <span><i class="fa-solid fa-quote-right text-primary"></i> Grounded Citations</span>
+              </div>
+              <button class="btn-send" id="btnSendChat" onclick="sendMessage()">
+                <span>Send</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. DOCUMENTS VIEW -->
+      <div id="view-documents" class="view-panel">
+        <div class="docs-header">
+          <div>
+            <h2>Organizational Knowledge Hub</h2>
+            <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 4px;">Upload and index documents into the current workspace</p>
+          </div>
+          <button class="btn-send" onclick="document.getElementById('fileUploadInput').click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
+          </button>
+          <input type="file" id="fileUploadInput" style="display: none;" onchange="handleFileSelect(this)" accept=".pdf,.docx,.txt,.md,.html">
+        </div>
+
+        <!-- Drag & Drop Zone -->
+        <div class="dropzone-box" id="dropZone" onclick="document.getElementById('fileUploadInput').click()">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <h3>Drag and drop documents here</h3>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 6px;">Supported formats: PDF, DOCX, Markdown, TXT, HTML (Max 50MB)</p>
+        </div>
+
+        <!-- Documents Table -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Document Title</th>
+                <th>Format</th>
+                <th>Size</th>
+                <th>Ingestion Status</th>
+                <th>Chunks</th>
+                <th>Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="docsTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-dim);">No documents uploaded yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. USAGE & COST VIEW -->
+      <div id="view-usage" class="view-panel">
+        <div class="docs-header">
+          <div>
+            <h2>Usage & Cost Analytics</h2>
+            <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 4px;">Audited LLM queries, token consumption, and cost calculations</p>
+          </div>
+          <button class="btn-send" onclick="loadUsageData()">
+            <i class="fa-solid fa-rotate-right"></i> Refresh Stats
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="metric-card">
+            <span class="title">Total Queries</span>
+            <span class="value" id="metricTotalQueries">0</span>
+            <span class="sub"><i class="fa-solid fa-arrow-up"></i> Live RAG requests</span>
+          </div>
+          <div class="metric-card">
+            <span class="title">Total Tokens</span>
+            <span class="value" id="metricTotalTokens">0</span>
+            <span class="sub" id="metricTokenSub">Input / Output split</span>
+          </div>
+          <div class="metric-card">
+            <span class="title">Estimated Cost</span>
+            <span class="value" id="metricTotalCost">$0.00</span>
+            <span class="sub">Audited USD consumption</span>
+          </div>
+          <div class="metric-card">
+            <span class="title">Average Latency</span>
+            <span class="value" id="metricAvgLatency">0 ms</span>
+            <span class="sub">End-to-end response time</span>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 14px; font-size: 1rem;">Recent Ingestion & Generation Audits</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Event ID</th>
+                <th>Model</th>
+                <th>Input Tokens</th>
+                <th>Output Tokens</th>
+                <th>Latency</th>
+                <th>Cost (USD)</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="usageTableBody">
+              <tr><td colspan="7" style="text-align: center; color: var(--text-dim);">No events recorded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. ADMIN TELEMETRY VIEW -->
+      <div id="view-admin" class="view-panel">
+        <div class="docs-header">
+          <div>
+            <h2>System Observability & Health</h2>
+            <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 4px;">Service health checks, vector storage state, and cluster metrics</p>
+          </div>
+          <button class="btn-send" onclick="loadAdminStats()">
+            <i class="fa-solid fa-rotate-right"></i> Refresh
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="metric-card">
+            <span class="title">Database State</span>
+            <span class="value" style="color: var(--accent-emerald);" id="adminDbStatus">Connected</span>
+            <span class="sub">PostgreSQL / SQLite Core</span>
+          </div>
+          <div class="metric-card">
+            <span class="title">Vector Store</span>
+            <span class="value" style="color: var(--accent-cyan);" id="adminVectorStatus">Active</span>
+            <span class="sub">Qdrant / Hybrid Engine</span>
+          </div>
+          <div class="metric-card">
+            <span class="title">Indexed Chunks</span>
+            <span class="value" id="adminChunkCount">0</span>
+            <span class="sub">Searchable vectors</span>
+          </div>
+          <div class="metric-card">
+            <span class="title">Worker Queue</span>
+            <span class="value" style="color: var(--accent-emerald);" id="adminWorkerStatus">Active</span>
+            <span class="sub">Background Ingestion Pipeline</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Citation Detail Modal -->
+  <div class="modal-overlay" id="citationModal">
+    <div class="modal-content">
+      <div class="modal-title">
+        <span id="modalDocTitle">Document Citation</span>
+        <button class="close-btn" onclick="closeCitationModal()">&times;</button>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-dim); display: flex; gap: 14px; margin-bottom: 8px;">
+        <span id="modalPageNumber"><i class="fa-solid fa-book-open"></i> Page 1</span>
+        <span id="modalRelevance"><i class="fa-solid fa-bullseye"></i> Relevance: 0.95</span>
+      </div>
+      <div class="citation-box" id="modalSnippet">
+        Source chunk text will be shown here.
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content">
+      <div class="modal-title">
+        <span id="authModalTitle">Sign In to Platform</span>
+        <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="email" id="authEmail" placeholder="name@company.com" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 10px 14px; color: #fff;">
+        <input type="password" id="authPassword" placeholder="Password (min 6 chars)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 10px 14px; color: #fff;">
+        <button class="btn-send" style="justify-content: center;" onclick="performAuth()">Sign In / Register</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global State
+    let authToken = localStorage.getItem("rag_token") || "";
+    let currentOrgId = "";
+    let currentWorkspaceId = "";
+    let currentConversationId = null;
+
+    // API URL prefix
+    const API_BASE = "/api/v1";
+
+    function headers() {
+      const h = { "Content-Type": "application/json" };
+      if (authToken) h["Authorization"] = `Bearer ${authToken}`;
+      if (currentOrgId) h["X-Organization-ID"] = currentOrgId;
+      return h;
+    }
+
+    async function initApp() {
+      if (!authToken) {
+        // Quick auto-registration or login for zero-friction demo
+        await autoDemoLogin();
+      }
+      await loadOrganizations();
+      await loadWorkspaces();
+      await loadDocuments();
+    }
+
+    async function autoDemoLogin() {
+      try {
+        const resp = await fetch(`${API_BASE}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "admin@enterprise.ai",
+            password: "enterprise_secret_demo",
+            full_name: "Lead AI Engineer",
+            organization_name: "Acme Enterprise"
+          })
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          authToken = data.access_token;
+          localStorage.setItem("rag_token", authToken);
+        } else {
+          // Login if already registered
+          const lResp = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: "admin@enterprise.ai",
+              password: "enterprise_secret_demo"
+            })
+          });
+          if (lResp.ok) {
+            const data = await lResp.json();
+            authToken = data.access_token;
+            localStorage.setItem("rag_token", authToken);
+          }
+        }
+      } catch (err) {
+        console.warn("Auto-login error:", err);
+      }
+    }
+
+    async function loadOrganizations() {
+      try {
+        const resp = await fetch(`${API_BASE}/organizations`, { headers: headers() });
+        if (resp.ok) {
+          const orgs = await resp.json();
+          const sel = document.getElementById("orgSelector");
+          sel.innerHTML = "";
+          orgs.forEach(o => {
+            const opt = document.createElement("option");
+            opt.value = o.id;
+            opt.textContent = o.name;
+            sel.appendChild(opt);
+          });
+          if (orgs.length > 0) {
+            currentOrgId = orgs[0].id;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadWorkspaces() {
+      if (!currentOrgId) return;
+      try {
+        const resp = await fetch(`${API_BASE}/workspaces`, { headers: headers() });
+        if (resp.ok) {
+          const wsList = await resp.json();
+          const sel = document.getElementById("workspaceSelector");
+          sel.innerHTML = "";
+          wsList.forEach(w => {
+            const opt = document.createElement("option");
+            opt.value = w.id;
+            opt.textContent = w.name;
+            sel.appendChild(opt);
+          });
+          if (wsList.length > 0) {
+            currentWorkspaceId = wsList[0].id;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function switchOrganization(orgId) {
+      currentOrgId = orgId;
+      loadWorkspaces().then(() => loadDocuments());
+    }
+
+    function switchWorkspace(wsId) {
+      currentWorkspaceId = wsId;
+      loadDocuments();
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+
+      const targetView = document.getElementById(`view-${tabName}`);
+      if (targetView) targetView.classList.add("active");
+
+      // Set sidebar item active
+      event.currentTarget.classList.add("active");
+
+      if (tabName === "documents") loadDocuments();
+      if (tabName === "usage") loadUsageData();
+      if (tabName === "admin") loadAdminStats();
+    }
+
+    // Chat Logic
+    function handleChatKey(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message || !currentWorkspaceId) return;
+
+      input.value = "";
+      const sendBtn = document.getElementById("btnSendChat");
+      sendBtn.disabled = true;
+
+      // Append User Bubble
+      const chatList = document.getElementById("chatMessageList");
+      const userRow = document.createElement("div");
+      userRow.className = "message-row user";
+      userRow.innerHTML = `
+        <div class="avatar user-av"><i class="fa-solid fa-user"></i></div>
+        <div class="bubble">${escapeHtml(message)}</div>
+      `;
+      chatList.appendChild(userRow);
+
+      // Append Assistant Bubble Container
+      const botRow = document.createElement("div");
+      botRow.className = "message-row assistant";
+      const bubbleId = "bubble-" + Date.now();
+      botRow.innerHTML = `
+        <div class="avatar bot-av"><i class="fa-solid fa-robot"></i></div>
+        <div class="bubble" id="${bubbleId}">
+          <span class="typing-text"><i class="fa-solid fa-circle-notch fa-spin"></i> Retrieving context...</span>
+        </div>
+      `;
+      chatList.appendChild(botRow);
+      chatList.scrollTop = chatList.scrollHeight;
+
+      try {
+        const resp = await fetch(`${API_BASE}/chat`, {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({
+            message: message,
+            workspace_id: currentWorkspaceId,
+            conversation_id: currentConversationId,
+            stream: true
+          })
+        });
+
+        const bubbleEl = document.getElementById(bubbleId);
+        bubbleEl.innerHTML = "";
+        let citations = [];
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n\n");
+          buffer = lines.pop() || "";
+
+          for (const block of lines) {
+            const eventLine = block.split("\n").find(l => l.startsWith("event: "));
+            const dataLine = block.split("\n").find(l => l.startsWith("data: "));
+
+            if (eventLine && dataLine) {
+              const eventType = eventLine.replace("event: ", "").trim();
+              const eventData = JSON.parse(dataLine.replace("data: ", "").trim());
+
+              if (eventType === "metadata") {
+                currentConversationId = eventData.conversation_id;
+                citations = eventData.citations || [];
+              } else if (eventType === "token") {
+                bubbleEl.innerHTML += escapeHtml(eventData.token).replace(/\n/g, "<br>");
+                chatList.scrollTop = chatList.scrollHeight;
+              } else if (eventType === "done") {
+                if (citations && citations.length > 0) {
+                  const tray = document.createElement("div");
+                  tray.className = "citation-tray";
+                  citations.forEach((c, idx) => {
+                    const pill = document.createElement("span");
+                    pill.className = "citation-pill";
+                    pill.innerHTML = `<i class="fa-solid fa-quote-left"></i> [${idx+1}] ${c.document_name} (p.${c.page_number})`;
+                    pill.onclick = () => showCitationModal(c);
+                    tray.appendChild(pill);
+                  });
+                  bubbleEl.appendChild(tray);
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        const bubbleEl = document.getElementById(bubbleId);
+        bubbleEl.innerHTML = `<span style="color: var(--accent-rose);"><i class="fa-solid fa-triangle-exclamation"></i> Error connecting to RAG pipeline.</span>`;
+      } finally {
+        sendBtn.disabled = false;
+        chatList.scrollTop = chatList.scrollHeight;
+      }
+    }
+
+    // Documents Hub
+    async function loadDocuments() {
+      if (!currentWorkspaceId) return;
+      try {
+        const resp = await fetch(`${API_BASE}/documents?workspace_id=${currentWorkspaceId}`, { headers: headers() });
+        if (resp.ok) {
+          const docs = await resp.json();
+          renderDocsTable(docs);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderDocsTable(docs) {
+      const tbody = document.getElementById("docsTableBody");
+      if (!docs || docs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No documents found in this workspace. Upload your first document above.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = docs.map(doc => `
+        <tr>
+          <td><strong>${escapeHtml(doc.title)}</strong></td>
+          <td><span style="font-family: var(--font-code); color: var(--accent-cyan); text-transform: uppercase;">${doc.file_type}</span></td>
+          <td>${(doc.file_size / 1024).toFixed(1)} KB</td>
+          <td><span class="status-badge status-${doc.status}">${doc.status}</span></td>
+          <td>${doc.status === 'READY' ? '<i class="fa-solid fa-database text-emerald"></i> Indexed' : '-'}</td>
+          <td>${new Date(doc.created_at).toLocaleDateString()}</td>
+          <td>
+            <button onclick="deleteDoc('${doc.id}')" style="background: transparent; border: none; color: var(--accent-rose); cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function handleFileSelect(input) {
+      const file = input.files[0];
+      if (!file || !currentWorkspaceId) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("workspace_id", currentWorkspaceId);
+
+      try {
+        const resp = await fetch(`${API_BASE}/documents`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${authToken}`,
+            "X-Organization-ID": currentOrgId
+          },
+          body: formData
+        });
+        if (resp.ok) {
+          input.value = "";
+          await loadDocuments();
+          // Poll document status for 10 seconds
+          let pollCount = 0;
+          const poller = setInterval(async () => {
+            pollCount++;
+            await loadDocuments();
+            if (pollCount > 8) clearInterval(poller);
+          }, 1500);
+        }
+      } catch (e) {
+        console.error("Upload failed", e);
+      }
+    }
+
+    async function deleteDoc(docId) {
+      if (!confirm("Are you sure you want to delete this document from the vector store and database?")) return;
+      try {
+        await fetch(`${API_BASE}/documents/${docId}`, {
+          method: "DELETE",
+          headers: headers()
+        });
+        await loadDocuments();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Usage & Admin
+    async function loadUsageData() {
+      try {
+        const resp = await fetch(`${API_BASE}/usage`, { headers: headers() });
+        if (resp.ok) {
+          const data = await resp.json();
+          document.getElementById("metricTotalQueries").textContent = data.total_requests;
+          document.getElementById("metricTotalTokens").textContent = data.total_tokens.toLocaleString();
+          document.getElementById("metricTokenSub").textContent = `${data.total_input_tokens.toLocaleString()} in / ${data.total_output_tokens.toLocaleString()} out`;
+          document.getElementById("metricTotalCost").textContent = `$${data.total_estimated_cost_usd.toFixed(4)}`;
+          document.getElementById("metricAvgLatency").textContent = `${data.average_latency_ms} ms`;
+
+          const tbody = document.getElementById("usageTableBody");
+          if (data.recent_events && data.recent_events.length > 0) {
+            tbody.innerHTML = data.recent_events.map(ev => `
+              <tr>
+                <td style="font-family: var(--font-code);">${ev.id.substring(0, 8)}</td>
+                <td><span class="citation-pill">${ev.model}</span></td>
+                <td>${ev.input_tokens}</td>
+                <td>${ev.output_tokens}</td>
+                <td>${ev.latency_ms} ms</td>
+                <td>$${ev.estimated_cost}</td>
+                <td>${new Date(ev.created_at).toLocaleTimeString()}</td>
+              </tr>
+            `).join("");
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadAdminStats() {
+      try {
+        const resp = await fetch(`${API_BASE}/admin/stats`, { headers: headers() });
+        if (resp.ok) {
+          const stats = await resp.json();
+          document.getElementById("adminChunkCount").textContent = stats.indexed_chunks_count.toLocaleString();
+        }
+        const hResp = await fetch(`${API_BASE}/admin/health`, { headers: headers() });
+        if (hResp.ok) {
+          const health = await hResp.json();
+          document.getElementById("adminDbStatus").textContent = health.components.database;
+          document.getElementById("adminVectorStatus").textContent = health.components.qdrant_vector_store;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Modals
+    function showCitationModal(citation) {
+      document.getElementById("modalDocTitle").textContent = citation.document_name;
+      document.getElementById("modalPageNumber").innerHTML = `<i class="fa-solid fa-book-open"></i> Page ${citation.page_number}`;
+      document.getElementById("modalRelevance").innerHTML = `<i class="fa-solid fa-bullseye"></i> Score: ${citation.relevance_score}`;
+      document.getElementById("modalSnippet").textContent = citation.snippet;
+      document.getElementById("citationModal").classList.add("active");
+    }
+    function closeCitationModal() {
+      document.getElementById("citationModal").classList.remove("active");
+    }
+
+    function openAuthModal() {
+      document.getElementById("authModal").classList.add("active");
+    }
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.remove("active");
+    }
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Boot
+    window.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
